@@ -80,20 +80,28 @@ const App: () => React$Node = () => {
 
 async function requestAdConsentStatus() {
   try {
-    const isRequestLocationInEeaOrUnknown = await RNAdConsent.isRequestLocationInEeaOrUnknown();
+    const consentStatus = await RNAdConsent.requestConsentInfoUpdate({
+      publisherId: 'pub-9393753408176356',
+    });
 
-    console.info(
-      'isRequestLocationInEeaOrUnknown: ',
-      isRequestLocationInEeaOrUnknown,
-    );
+    console.info('consentStatus: ', consentStatus);
 
-    if (isRequestLocationInEeaOrUnknown) {
-      const formResponse = await RNAdConsent.showGoogleConsentForm({
-        privacyPolicyUrl:
-          'https://preggersapp.com/personuppgiftspolicy/#policy',
-      });
+    if (consentStatus === RNAdConsent.UNKNOWN) {
+      const isRequestLocationInEeaOrUnknown = await RNAdConsent.isRequestLocationInEeaOrUnknown();
 
-      console.info('formResponse: ', formResponse);
+      console.info(
+        'isRequestLocationInEeaOrUnknown: ',
+        isRequestLocationInEeaOrUnknown,
+      );
+
+      if (isRequestLocationInEeaOrUnknown) {
+        const formResponse = await RNAdConsent.showGoogleConsentForm({
+          privacyPolicyUrl:
+            'https://preggersapp.com/personuppgiftspolicy/#policy',
+        });
+
+        console.info('formResponse: ', formResponse);
+      }
     }
   } catch (err) {
     console.log('err: ', err);
